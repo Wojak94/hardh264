@@ -108,11 +108,11 @@ process	--data input / compute
 	variable vali : integer;
 	variable n : integer;
 begin
-	write(sout,"# Test output from VHDL TEST_HEADER");
+	write(sout,string'("# Test output from VHDL TEST_HEADER"));
 	writeline(output,sout);
 	--
 	for iqp in 0 to 51 loop
-		write(sout,"# qp=");
+		write(sout,string'("# qp="));
 		write(sout,iqp);
 		writeline(output,sout);
 		qp <= conv_std_logic_vector(iqp,6);
@@ -161,10 +161,10 @@ begin
 	--
 	end loop;
 	--
-	write(sout,"#2nd stage tests (of tobytes)");
+	write(sout,string'("#2nd stage tests (of tobytes)"));
 	writeline(output,sout);
 	--
-	write(sout,"TEST 111111111");
+	write(sout,string'("TEST 111111111"));
 	writeline(output,sout);
 	VALID2 <= '1';
 	VE2 <= x"001FF";
@@ -183,7 +183,7 @@ begin
 				&conv_std_logic_vector(b,3)&conv_std_logic_vector(b,3);
 			VL2 <= conv_std_logic_vector(n,5);
 			wait until rising_edge(CLK);
-			write(sout,"TEST ");
+			write(sout,string'("TEST "));
 			for i in n-1 downto 0 loop
 				write(sout,conv_integer(VE2(i)));
 			end loop;
@@ -211,11 +211,11 @@ begin
 		VE2 <= x"000FF";
 		VL2 <= conv_std_logic_vector(n,5);
 		wait until rising_edge(CLK);	
-			write(sout,"TEST ");
+			write(sout,string'("TEST "));
 			for i in n-1 downto 0 loop
 				write(sout,conv_integer(VE2(i)));
 			end loop;
-			write(sout," 1 ALIGN");
+			write(sout,string'(" 1 ALIGN"));
 			writeline(output,sout);
 		VALID2 <= '1';
 		VE2 <= x"10080";	--special align terminal
@@ -236,11 +236,11 @@ begin
 		VE2 <= x"000FF";
 		VL2 <= conv_std_logic_vector(n,5);
 		wait until rising_edge(CLK);	
-			write(sout,"TEST ");
+			write(sout,string'("TEST "));
 			for i in n-1 downto 0 loop
 				write(sout,conv_integer(VE2(i)));
 			end loop;
-			write(sout," 1 ALIGN");
+			write(sout,string'(" 1 ALIGN"));
 			writeline(output,sout);
 		VALID2 <= '1';
 		VE2 <= x"10080";	--special align terminal
@@ -259,11 +259,11 @@ begin
 		VE2 <= x"000FF";
 		VL2 <= conv_std_logic_vector(n,5);
 		wait until rising_edge(CLK);	
-			write(sout,"TEST ");
+			write(sout,string'("TEST "));
 			for i in n-1 downto 0 loop
 				write(sout,conv_integer(VE2(i)));
 			end loop;
-			write(sout," 1 ALIGN+DONE");
+			write(sout,string'(" 1 ALIGN+DONE"));
 			writeline(output,sout);
 		VALID2 <= '1';
 		VE2 <= x"30080";	--special align terminal
@@ -284,11 +284,11 @@ begin
 		VE2 <= x"000FF";
 		VL2 <= conv_std_logic_vector(n,5);
 		wait until rising_edge(CLK);	
-			write(sout,"TEST ");
+			write(sout,string'("TEST "));
 			for i in n-1 downto 0 loop
 				write(sout,conv_integer(VE2(i)));
 			end loop;
-			write(sout," 1 ALIGN+DONE");
+			write(sout,string'(" 1 ALIGN+DONE"));
 			writeline(output,sout);
 		VALID2 <= '1';
 		VE2 <= x"30080";	--special align terminal
@@ -303,7 +303,7 @@ begin
 	--
 	--stuffing tests (slow)
 	for n in 8 downto 0 loop
-			write(sout,"STUFFING TEST 00 00 0");
+			write(sout,string'("STUFFING TEST 00 00 0"));
 			write(sout,n);
 			writeline(output,sout);
 		VALID2 <= '1';
@@ -325,7 +325,7 @@ begin
 			VALID2 <= '0';
 			wait until READY='1';
 		end if;
-			write(sout,"STUFFING TEST 00 00 0");
+			write(sout,string'("STUFFING TEST 00 00 0"));
 			write(sout,n);
 			writeline(output,sout);
 		VALID2 <= '1';
@@ -345,7 +345,7 @@ begin
 	wait until rising_edge(CLK);	
 	--
 	wait for 3 us; wait until rising_edge(CLK);
-	write(sout,"#end of input");
+	write(sout,string'("#end of input"));
 	writeline(output,sout);
 	assert false report "DONE" severity FAILURE;
 end process;
@@ -357,13 +357,13 @@ process(CLK)		--output from uut
 begin
 	if rising_edge(CLK) then
 		if VALID='1' then
-			write(sout,"OUT ");
+			write(sout,string'("OUT "));
 			n := conv_integer(vl);
 			bb := 8;
 			for i in n-1 downto 0 loop
 				write(sout,conv_integer(ve(i)));
 				bb := bb - 1;
-				if bb=0 then write(sout," "); bb:= 8; end if;
+				if bb=0 then write(sout,string'(" ")); bb:= 8; end if;
 			end loop;
 			writeline(output,sout);
 		end if;
@@ -377,7 +377,7 @@ process(CLK)		--output from uut1
 begin
 	if rising_edge(CLK) then
 		if STROBE='1' then
-			write(sout,"=> BYTE ");
+			write(sout,string'("=> BYTE "));
 			n := conv_integer(xbyte(7 downto 4));
 			write(sout, table(n+1));
 			n := conv_integer(xbyte(3 downto 0));

@@ -54,11 +54,11 @@ architecture cavlc_test of test is
 	constant STATE_RUNBF  : std_logic_vector(2 downto 0) := b"110";
 	signal CLK : std_logic := '0';			--clock
 	signal CLK2 : std_logic;				--2x clock
-	signal ENABLE : std_logic := '0';				--values transfered only when this is 1
+	signal ENABLE : std_logic := '0';		--values transfered only when this is 1
 	signal READY : std_logic;				--values transfered only when this is 1
 	signal VIN : std_logic_vector(11 downto 0) := x"000";		--12bits max (+/- 2048)
 	signal NIN : std_logic_vector(4 downto 0);	--N coeffs nearby mb
-	signal VE : std_logic_vector(27 downto 0) := (others=>'0');
+	signal VE : std_logic_vector(24 downto 0) := (others=>'0');
 	signal VL : std_logic_vector(4 downto 0) := (others=>'0');
 	signal VALID : std_logic := '0';	-- enable delayed to same as VE/VL
 	signal XSTATE : std_logic_vector(2 downto 0) := (others=>'0');
@@ -186,63 +186,63 @@ begin
 		state <= xstate;	--delay xstate by 1clk so it lines up with VE/VL
 		if en1='1' or en2='1' then
 			if SIN='0' then
-				write(sout,"IN");
+				write(sout,string'("IN"));
 			else
-				write(sout,"in");
+				write(sout,string'("in"));
 			end if;
 			if en1='1' then
 				if vin1(11)='0' then
-					write(sout," ");
+					write(sout,string'(" "));
 					write(sout,conv_integer(vin1));	--probably single digit
 				else
-					write(sout,"-");
+					write(sout,string'("-"));
 					write(sout,conv_integer(x"000"-vin1));	--probably single digit
 				end if;
 			else
-				write(sout,"  ");
+				write(sout,string'("  "));
 			end if;
 			if en2='1' then
 				if vin2(11)='0' then
-					write(sout," ");
+					write(sout,string'(" "));
 					write(sout,conv_integer(vin2));	--probably single digit
 				else
-					write(sout,"-");
+					write(sout,string'("-"));
 					write(sout,conv_integer(x"000"-vin2));	--probably single digit
 				end if;
 			else
-				write(sout,"  ");
+				write(sout,string'("  "));
 			end if;
-			write(sout,"  ");
+			write(sout,string'("  "));
 		else
-			write(sout,"--      ");
+			write(sout,string'("--      "));
 		end if;
 		--DEBUG OUTPUT INTERNAL STATES
 		if state = STATE_IDLE then
-			write(sout,"IDLE  ");
+			write(sout,string'("IDLE  "));
 		elsif state = STATE_CTOKEN then
-			write(sout,"CTOKEN");
+			write(sout,string'("CTOKEN"));
 		elsif state = STATE_T1SIGN then
-			write(sout,"T1SIGN");
+			write(sout,string'("T1SIGN"));
 		elsif state = STATE_COEFFS then
-			write(sout,"COEFFS");
+			write(sout,string'("COEFFS"));
 		elsif state = STATE_TZEROS then
-			write(sout,"TZEROS");
+			write(sout,string'("TZEROS"));
 		elsif state = STATE_RUNBF then
-			write(sout,"RUNBF ");
+			write(sout,string'("RUNBF "));
 		else
-			write(sout,"????  ");
+			write(sout,string'("????  "));
 		end if;
 		if VALID='1' then
 			--output on VL/VE
 			if VS='0' then
-				write(sout," OUT ");
+				write(sout,string'(" OUT "));
 			else
-				write(sout," out ");
+				write(sout,string'(" out "));
 			end if;
 			n := conv_integer(vl);
-			if n<10 then write(sout," "); end if;
+			if n<10 then write(sout,string'(" ")); end if;
 			write(sout,n);
-			write(sout," ");
+			write(sout,string'(" "));
 			for i in n-1 downto 0 loop
 				if i > n then
 					write(sout,'.');

@@ -134,14 +134,16 @@ process	--data input
 	--
 	variable slow : boolean := true;
 	--
+	file file_handler     : text open read_mode is "/home/wojak/Vivado_projects/hardh264/tests/testresidual.txt";
+
 begin
 	enable <= '0';
-	write(sout,"# Test output from VHDL TEST_TRANSFORM");
+	write(sout,string'("# Test output from VHDL TEST_TRANSFORM"));
 	writeline(output,sout);
 	--
-	cmd: while not endfile(input) loop
-		readline(input,s);
-		write(s,' ');	--add space to end
+	cmd: while not endfile(file_handler) loop
+		readline(file_handler,s);
+		write(s,string'(" "));	--add space to end
 		--write(sout,"READ:");
 		--//write(sout,s);
 		--writeline(output,sout);
@@ -150,7 +152,7 @@ begin
 			next cmd;
 		end if;
 		if c /= 'r' then
-			write(sout,"ERROR EXPECTING residual");
+			write(sout,string'("ERROR EXPECTING residual"));
 			--//write(sout,s);
 			writeline(output,sout);
 			next cmd;
@@ -162,12 +164,12 @@ begin
 		read(s,c);--u
 		read(s,c);--a
 		read(s,c);--l
-		write(sout,"residual ");
+		write(sout,string'("residual "));
 		for i in 0 to 15 loop
 			read(s,vali);	--first coeff
 			data(i) := vali;
 			write(sout,vali);
-			write(sout," ");
+			write(sout,string'(" "));
 			assert vali <= 255 and vali >= -255 report "residual value out of range" severity ERROR;
 		end loop;
 		--
@@ -195,7 +197,7 @@ begin
 		end if;
 	end loop;	--all input lines
 	wait for 1000 ns;
-	write(sout,"#end of input");
+	write(sout,string'("#end of input"));
 	writeline(output,sout);
 	wait for 1 ms;
 	assert false report "DONE" severity ERROR;
@@ -210,11 +212,11 @@ begin
 	if rising_edge(CLK2) then
 		if uuttransform_valid='1' then
 			if not wasvalid then
-				write(sout,"=> coeff");
+				write(sout,string'("=> coeff"));
 				wasvalid := true;
 			end if;
 			n := conv_integer_signed(uuttransform_ynout);
-			write(sout," ");
+			write(sout,string'(" "));
 			write(sout,n);
 		elsif wasvalid then -- and not VALID
 			writeline(output,sout);
@@ -232,9 +234,9 @@ begin
 	if rising_edge(CLK2) then
 		if uutquant_valid='1' then
 			if not wasvalid then
-				write(sout,"=> quant(qp:");
+				write(sout,string'("=> quant(qp:"));
 				write(sout,conv_integer(qp));
-				write(sout,")");
+				write(sout,string'(")"));
 				wasvalid := true;
 			end if;
 			if uutquant_zout(11)='0' then
@@ -242,7 +244,7 @@ begin
 			else
 				n := conv_integer(uutquant_zout)-4096;
 			end if;
-			write(sout," ");
+			write(sout,string'(" "));
 			write(sout,n);
 		elsif wasvalid then -- and not VALID
 			writeline(output,sout);
@@ -260,7 +262,7 @@ begin
 	if rising_edge(CLK2) then
 		if uutdequant_valid='1' then
 			if not wasvalid then
-				write(sout,"=> coeff'");
+				write(sout,string'("=> coeff'"));
 				wasvalid := true;
 			end if;
 			if uutdequant_wout(15)='0' then
@@ -268,7 +270,7 @@ begin
 			else
 				n := conv_integer(uutdequant_wout)-65536;
 			end if;
-			write(sout," ");
+			write(sout,string'(" "));
 			write(sout,n);
 		elsif wasvalid then -- and not VALID
 			writeline(output,sout);
@@ -287,7 +289,7 @@ begin
 	if rising_edge(CLK2) then
 		if uutinvtransform_valid='1' then
 			if not wasvalid then
-				write(sout,"=> residual");
+				write(sout,string'("=> residual"));
 				--write(rout,"=> residual");
 				wasvalid := true;
 			end if;
@@ -298,10 +300,10 @@ begin
 				else
 					n := conv_integer(uutinvtransform_xout(8+b downto b))-512;
 				end if;
-				write(sout," ");
+				write(sout,string'(" "));
 				write(sout,n);
 			end loop;
-			write(sout,";");
+			write(sout,string'(";"));
 		elsif wasvalid then -- and not VALID
 			writeline(output,sout);
 			wasvalid := false;
@@ -432,15 +434,15 @@ begin
 			qi := 0;
 		end if;
 		if qi=16 then
-			write(cout,"** coeff'");
+			write(cout,string'("** coeff'"));
 			for y in 0 to 3 loop
 				for x in 0 to 3 loop
-					write(cout," ");
+					write(cout,string'(" "));
 					write(cout,d(x,y));
 				end loop;
-				write(cout,";");
+				write(cout,string'(";"));
 			end loop;
-			write(sout,"** residual");
+			write(sout,string'("** residual"));
 			differ := false;
 			--
 			--now perform transform on it
@@ -487,17 +489,17 @@ begin
 				--else
 				--	n := conv_integer(uutinvtransform_xout(8+b downto b))-512;
 				--end if;
-				write(sout," ");
+				write(sout,string'(" "));
 				write(sout,v);
 				if n /= v then
 					differ := true;
 				end if;
 				--assert n = v report "computed invtransform differs" severity warning; 
 			end loop;
-			write(sout,";");
+			write(sout,string'(";"));
 			if yo=3 then
 				if differ then
-					write(sout," ** DIFFERS");
+					write(sout,string'(" ** DIFFERS"));
 					writeline(output,cout);
 					writeline(output,sout);
 				else
